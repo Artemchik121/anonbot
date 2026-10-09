@@ -81,7 +81,7 @@ from database import (execute, one, many, init_db, now, get_user, uname, set_sta
 # На хостинге задавайте значения через переменные окружения (VK_TOKEN, VK_GROUP_ID,
 # ADMIN_IDS, WEB_PASSWORD) — тогда секреты не попадут на GitHub.
 TOKEN = (os.environ.get("BOT_TOKEN") or os.environ.get("BOT_TOKEN") or os.environ.get("TOKEN") or "").strip()     # ключ доступа сообщества
-GROUP_ID = int(os.environ.get("VK_GROUP_ID") or 123456789)                        # ID сообщества (только цифры)
+GROUP_ID = 123456789                     # ID сообщества (только цифры)
 ADMIN_IDS = [int(x) for x in os.environ.get("ADMIN_IDS", "739351270").split(",") if x.strip()]
 
 WEB_ENABLED = True                      # веб-панель вкл/выкл
