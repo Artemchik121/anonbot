@@ -222,23 +222,18 @@ def ensure_user(uid):
 
 
 # ───────────────────────────── КАРТОЧКА ДЛЯ ИСТОРИИ ─────────────────────────────
-_HERE = os.path.dirname(os.path.abspath(__file__))
-
+_HERE = os.path.dirname(os.path.abspath(__file__)) # Папка, где лежит сам скрипт
 _FONTS = {
     "reg": [
-        os.path.join(_HERE, "DejaVuSans.ttf"),
-        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+        os.path.join(_HERE, "DejaVuSans.ttf"),       # 1. Ищем в папке со скриптом (Хостинг)
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", # 2. Системные пути Linux (на всякий случай)
         "/usr/share/fonts/dejavu/DejaVuSans.ttf",
-        "C:/Windows/Fonts/segoeui.ttf",
-        "C:/Windows/Fonts/arial.ttf",
     ],
     "bold": [
-        # жирного пока нет — используем обычный, шрифт всё равно читается
-        os.path.join(_HERE, "DejaVuSans.ttf"),
+        os.path.join(_HERE, "DejaVuSans-Bold.ttf"),  # 1. Ищем жирный в папке со скриптом
+        os.path.join(_HERE, "DejaVuSans.ttf"),       # 2. Если жирного нет, берем обычный
         "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
         "/usr/share/fonts/dejavu/DejaVuSans-Bold.ttf",
-        "C:/Windows/Fonts/segoeuib.ttf",
-        "C:/Windows/Fonts/arialbd.ttf",
     ],
 }
 
