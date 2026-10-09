@@ -80,7 +80,7 @@ from database import (execute, one, many, init_db, now, get_user, uname, set_sta
 # ════════════════════════════ НАСТРОЙКИ ════════════════════════════
 # На хостинге задавайте значения через переменные окружения (VK_TOKEN, VK_GROUP_ID,
 # ADMIN_IDS, WEB_PASSWORD) — тогда секреты не попадут на GitHub.
-TOKEN = (os.environ.get("BOT_TOKEN") or os.environ.get("VK_TOKEN") or os.environ.get("TOKEN") or "").strip()     # ключ доступа сообщества
+TOKEN = (os.environ.get("BOT_TOKEN") or os.environ.get("BOT_TOKEN") or os.environ.get("TOKEN") or "").strip()     # ключ доступа сообщества
 GROUP_ID = int("".join(ch for ch in (os.environ.get("VK_GROUP_ID") or os.environ.get("GROUP_ID") or "0") if ch.isdigit()) or 0)                          # ID сообщества (только цифры)
 ADMIN_IDS = [int(x) for x in os.environ.get("ADMIN_IDS", "739351270").split(",") if x.strip()]
 
