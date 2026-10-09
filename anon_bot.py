@@ -7,65 +7,18 @@
 Нужен рядом файл database.py (база данных).
 Установка:      pip install vk_api flask pillow
 Запуск:         python anon_bot.py
+Веб-панель:     http://127.0.0.1:5000  (пароль — WEB_PASSWORD ниже)
+База данных:    SQLite, файл anon_bot.db создаётся сам рядом со скриптом.
+
+Настройка сообщества VK (Управление → Работа с API / Сообщения):
+  1. Сообщения сообщества — включить. Возможности ботов — включить,
+     «Разрешить добавлять сообщество в беседы» — по желанию.
+  2. Ключ доступа: права «сообщения» (и «управление»).
+  3. Long Poll API — включить, версия 5.199 (или новее).
+     Типы событий: «Входящее сообщение» и «Действие с callback-кнопкой».
 """
 
-print(">>> ЗАПУЩЕНА ВЕРСИЯ ФАЙЛА: v4 (жёсткая автоустановка)", flush=True)
-
-import subprocess
-import sys
-import os
-import importlib
-
-
-def _pip_install(packages):
-    """Пробует установить пакеты всеми возможными способами, возвращает True при успехе."""
-    base = [sys.executable, "-m", "pip", "install",
-            "--no-input", "--disable-pip-version-check"]
-    attempts = [
-        [],
-        ["--user"],
-        ["--break-system-packages"],
-        ["--user", "--break-system-packages"],
-    ]
-    for extra in attempts:
-        cmd = base + extra + packages
-        print(">>> PIP:", " ".join(cmd), flush=True)
-        try:
-            r = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
-            print(">>> PIP STDOUT:", (r.stdout or "")[-3000:], flush=True)
-            print(">>> PIP STDERR:", (r.stderr or "")[-3000:], flush=True)
-            if r.returncode == 0:
-                print(">>> PIP OK", flush=True)
-                return True
-        except Exception as e:
-            print(">>> PIP EXCEPTION:", repr(e), flush=True)
-    return False
-
-
-def _ensure(module_name, pip_name):
-    """Импортирует модуль, при неудаче — ставит через pip."""
-    try:
-        importlib.invalidate_caches()
-        return importlib.import_module(module_name)
-    except ImportError:
-        print(f">>> Модуль {module_name} не найден, ставлю {pip_name}...", flush=True)
-        if not _pip_install([pip_name]):
-            print(f">>> НЕ УДАЛОСЬ установить {pip_name}", flush=True)
-            return None
-        importlib.invalidate_caches()
-        try:
-            return importlib.import_module(module_name)
-        except ImportError as e:
-            print(f">>> ФАТАЛЬНО: {module_name} так и не импортировался: {e}", flush=True)
-            return None
-
-
-# Устанавливаем ключевые библиотеки при старте
-_ensure("vk_api", "vk_api==11.9.8")
-_ensure("flask", "flask")
-_ensure("PIL", "pillow")
-
-import vk_api
+print(">>> ЗАПУЩЕНА ВЕРСИЯ ФАЙЛА: v3 (с автоустановкой библиотек)", flush=True)
 
 import hmac
 import json
@@ -73,6 +26,7 @@ import logging
 import re
 import secrets
 import os
+import sys
 import tempfile
 import threading
 import time
@@ -108,6 +62,7 @@ def _ensure_packages():
 _ensure_packages()
 
 
+import vk_api
 try:
     from PIL import Image, ImageDraw, ImageFont
 except ImportError:      # pip install pillow
@@ -125,8 +80,8 @@ from database import (execute, one, many, init_db, now, get_user, uname, set_sta
 # ════════════════════════════ НАСТРОЙКИ ════════════════════════════
 # На хостинге задавайте значения через переменные окружения (VK_TOKEN, VK_GROUP_ID,
 # ADMIN_IDS, WEB_PASSWORD) — тогда секреты не попадут на GitHub.
-TOKEN = os.environ.get("BOT_TOKEN") or os.environ.get("VK_TOKEN") or ""     # ключ доступа сообщества
-GROUP_ID = int(os.environ.get("VK_GROUP_ID") or 0)                          # ID сообщества (только цифры)
+TOKEN = (os.environ.get("BOT_TOKEN") or os.environ.get("VK_TOKEN") or os.environ.get("TOKEN") or "").strip()     # ключ доступа сообщества
+GROUP_ID = int("".join(ch for ch in (os.environ.get("VK_GROUP_ID") or os.environ.get("GROUP_ID") or "0") if ch.isdigit()) or 0)                          # ID сообщества (только цифры)
 ADMIN_IDS = [int(x) for x in os.environ.get("ADMIN_IDS", "739351270").split(",") if x.strip()]
 
 WEB_ENABLED = True                      # веб-панель вкл/выкл
@@ -1334,6 +1289,10 @@ if __name__ == "__main__":
 
     if not TOKEN or not GROUP_ID:
         log.error("Не заданы переменные BOT_TOKEN и VK_GROUP_ID. Веб-панель при этом работает, бот — нет.")
+        log.error("Токен найден: %s | ID сообщества найден: %s", bool(TOKEN), bool(GROUP_ID))
+        log.error("Имена переменных, которые видит бот (значения не показываю): %s",
+                  ", ".join(sorted(k for k in os.environ
+                                   if any(w in k.upper() for w in ("TOKEN", "GROUP", "VK", "BOT", "ADMIN", "SECRET", "PASS")))) or "нет ни одной")
         if WEB_ENABLED:
             try:
                 while True:
