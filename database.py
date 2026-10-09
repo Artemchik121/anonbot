@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 database.py — база данных бота (SQLite) и функции работы с ней.
-Файл anon_bot.db создаётся автоматически рядом с этим файлом.
+Файл anon_bot.db создаётся автоматически в /app/data (или рядом с этим файлом).
 Кладите database.py В ОДНУ ПАПКУ с anon_bot.py.
 """
 import json
@@ -11,7 +11,11 @@ import threading
 import time
 from datetime import datetime, timedelta
 
-DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "anon_bot.db")
+# Папка для постоянных данных — Bothost сохраняет её между пересборками.
+# Если DATA_DIR не задан, база будет лежать рядом с database.py.
+_DATA_DIR = os.environ.get("DATA_DIR") or os.path.dirname(os.path.abspath(__file__))
+os.makedirs(_DATA_DIR, exist_ok=True)
+DB_PATH = os.path.join(_DATA_DIR, "anon_bot.db")
 
 _conn = sqlite3.connect(DB_PATH, check_same_thread=False)
 _conn.row_factory = sqlite3.Row
