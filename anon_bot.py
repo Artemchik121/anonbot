@@ -222,13 +222,24 @@ def ensure_user(uid):
 
 
 # ───────────────────────────── КАРТОЧКА ДЛЯ ИСТОРИИ ─────────────────────────────
+_HERE = os.path.dirname(os.path.abspath(__file__))
+
 _FONTS = {
-    "reg": ["C:/Windows/Fonts/segoeui.ttf", "C:/Windows/Fonts/arial.ttf",
-            "/System/Library/Fonts/Supplemental/Arial.ttf",
-            "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"],
-    "bold": ["C:/Windows/Fonts/segoeuib.ttf", "C:/Windows/Fonts/arialbd.ttf",
-             "/System/Library/Fonts/Supplemental/Arial Bold.ttf",
-             "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"],
+    "reg": [
+        os.path.join(_HERE, "DejaVuSans.ttf"),
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+        "/usr/share/fonts/dejavu/DejaVuSans.ttf",
+        "C:/Windows/Fonts/segoeui.ttf",
+        "C:/Windows/Fonts/arial.ttf",
+    ],
+    "bold": [
+        # жирного пока нет — используем обычный, шрифт всё равно читается
+        os.path.join(_HERE, "DejaVuSans.ttf"),
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+        "/usr/share/fonts/dejavu/DejaVuSans-Bold.ttf",
+        "C:/Windows/Fonts/segoeuib.ttf",
+        "C:/Windows/Fonts/arialbd.ttf",
+    ],
 }
 
 
